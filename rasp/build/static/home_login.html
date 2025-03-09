@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        Username: <input type="text" id="username" name="username"><br>
+        Password: <input type="password" id="password" name="password"><br>
+        <input type="submit" value="Login">
+    </form>
+
+    <script>
+        // Handle form submission
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get form data
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            // Send the data as JSON
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            // Handle the response
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === "success") {
+                    // Redirect to the video page
+                    document.cookie = "session_id="+data.session_id+";";
+                    window.location.href = "/video";
+                } else {
+                    alert("Login failed: " + data.message);
+                }
+            } else {
+                alert("An error occurred. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
